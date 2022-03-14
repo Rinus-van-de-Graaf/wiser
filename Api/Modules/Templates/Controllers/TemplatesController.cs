@@ -328,5 +328,14 @@ namespace Api.Modules.Templates.Controllers
         {
             return (await templatesService.GeneratePreviewAsync((ClaimsIdentity)User.Identity, requestModel)).GetHttpResponseMessage();
         }
+        
+        /// <summary>
+        /// Converts a JCL template to a GCL template.
+        /// </summary>
+        [HttpPost, Route("import-legacy"), ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ConvertLegacyTemplatesToNewTemplatesAsync()
+        {
+            return (await templatesService.ConvertLegacyTemplatesToNewTemplatesAsync()).GetHttpResponseMessage();
+        }
     }
 }

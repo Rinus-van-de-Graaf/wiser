@@ -180,5 +180,11 @@ namespace Api.Modules.Templates.Services
         {
             return await templatesService.GeneratePreviewAsync(identity, requestModel);
         }
+
+        /// <inheritdoc />
+        public async Task<ServiceResult<bool>> ConvertLegacyTemplatesToNewTemplatesAsync()
+        {
+            return await templatesService.ConvertLegacyTemplatesToNewTemplatesAsync();
+        }
     }
 }

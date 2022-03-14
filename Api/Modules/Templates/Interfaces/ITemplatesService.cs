@@ -7,7 +7,6 @@ using Api.Modules.Templates.Models;
 using Api.Modules.Templates.Models.DynamicContent;
 using Api.Modules.Templates.Models.History;
 using Api.Modules.Templates.Models.Other;
-using Api.Modules.Templates.Models.Preview;
 using Api.Modules.Templates.Models.Template;
 using GeeksCoreLibrary.Modules.Templates.Enums;
 using GeeksCoreLibrary.Modules.Templates.Models;
@@ -195,5 +194,10 @@ namespace Api.Modules.Templates.Interfaces
         /// <param name="requestModel">The template settings, they don't have to be saved yet.</param>
         /// <returns>The HTML of the template as it would look on the website.</returns>
         Task<ServiceResult<string>> GeneratePreviewAsync(ClaimsIdentity identity, GenerateTemplatePreviewRequestModel requestModel);
+
+        /// <summary>
+        /// Converts a JCL template to a GCL template.
+        /// </summary>
+        Task<ServiceResult<bool>> ConvertLegacyTemplatesToNewTemplatesAsync();
     }
 }

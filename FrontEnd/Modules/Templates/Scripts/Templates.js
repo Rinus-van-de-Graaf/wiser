@@ -147,6 +147,7 @@ const moduleSettings = {
 
             await this.initializeKendoComponents();
             this.bindSaveButton();
+            $("#importLegacyButton").click(this.importLegacyTemplates.bind(this));
             window.processing.removeProcess(process);
         }
 
@@ -164,6 +165,10 @@ const moduleSettings = {
 
             $("#saveButton").kendoButton({
                 icon: "save"
+            });
+
+            $("#importLegacyButton").kendoButton({
+                icon: "import"
             });
 
             // Main window
@@ -205,6 +210,22 @@ const moduleSettings = {
                 }
             }).data("kendoTabStrip");
 
+            await this.loadTabsAndTreeViews();
+
+            this.treeViewContextMenu = $("#treeViewContextMenu").kendoContextMenu({
+                dataSource: [
+                    { text: "Item toevoegen", attr: { action: "addNewItem" } },
+                    { text: "Hernoemen", attr: { action: "rename" } },
+                    { text: "Verwijderen", attr: { action: "delete" } }
+                ],
+                target: ".tabstrip-treeview",
+                filter: ".k-item",
+                open: this.onContextMenuOpen.bind(this),
+                select: this.onContextMenuSelect.bind(this)
+            }).data("kendoContextMenu");
+        }
+
+        async loadTabsAndTreeViews() {
             // Load the tabs via the API.
             this.treeViewTabs = await Wiser2.api({
                 url: `${this.settings.wiserApiRoot}templates/0/tree-view`,
@@ -257,18 +278,6 @@ const moduleSettings = {
                     dataSpriteCssClassField: "spriteCssClass"
                 }).data("kendoTreeView");
             });
-
-            this.treeViewContextMenu = $("#treeViewContextMenu").kendoContextMenu({
-                dataSource: [
-                    { text: "Item toevoegen", attr: { action: "addNewItem" } },
-                    { text: "Hernoemen", attr: { action: "rename" } },
-                    { text: "Verwijderen", attr: { action: "delete" } }
-                ],
-                target: ".tabstrip-treeview",
-                filter: ".k-item",
-                open: this.onContextMenuOpen.bind(this),
-                select: this.onContextMenuSelect.bind(this)
-            }).data("kendoContextMenu");
         }
 
         /**
@@ -1233,6 +1242,34 @@ const moduleSettings = {
             }
 
             return settings;
+        }
+
+        /**
+         * Imports the templates from the Wiser 1 templates modules into the Wiser 3 templates module.
+         */
+        async importLegacyTemplates() {
+            await kendo.confirm("Weet u zeker dat u de templatemodule van Wiser 1 wilt importeren? De tabellen 'wiser_template' en 'wiser_dynamic_content' moeten leeg zijn voordat u dit doet.");
+
+            const process = `importLegacyTemplates_${Date.now()}`;
+            window.processing.addProcess(process);
+
+            try {
+                const response = await Wiser2.api({
+                    url: `${this.settings.wiserApiRoot}templates/import-legacy`,
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json"
+                });
+                
+                await this.loadTabsAndTreeViews();
+
+                window.popupNotification.show(`Templates van Wiser 1 zijn succesvol geïmporteerd.`, "info");
+            } catch (exception) {
+                console.error(exception);
+                kendo.alert("Er is iets fout gegaan, probeer het a.u.b. opnieuw of neem contact op.");
+            }
+            
+            window.processing.removeProcess(process);
         }
 
         /**
