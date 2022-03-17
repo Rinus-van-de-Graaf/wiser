@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Api.Core.Helpers;
 using Api.Core.Interfaces;
 using Api.Core.Services;
@@ -3283,10 +3284,21 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
             input = ConvertBasicReplacement(input, "stripstyle", "StripInlineStyle");
             input = ConvertBasicReplacement(input, "base64", "Base64");
             input = ConvertBasicReplacement(input, "price", "Currency", "true");
+            input = ConvertBasicReplacement(input, "currency", "Currency", "true");
+
+            // Miscellaneous conversions.
+            input = input.Replace("{items}", "{items:Raw}");
 
             return input;
         }
-
+        
+        /// <summary>
+        /// Converts encryption/decryption replacements from JCL (eg {title_seo}) to GCL (eg {title:Seo}).
+        /// </summary>
+        /// <param name="input">The string from the JCL to do the replacements in.</param>
+        /// <param name="jclSuffix">The JCL suffix (without underscore) for the replacement to handle, such as "seo".</param>
+        /// <param name="gclSuffix">The suffix that it should be in the GCL.</param>
+        /// <param name="withDate">Whether this is an encryption/decryption that uses a datetime to make it invalid after X time.</param>
         private static string ConvertEncryptOrDecryptReplacement(string input, string jclSuffix, string gclSuffix, bool withDate)
         {
             var regex = new Regex(@$"{{(?<variableName>.+)_{jclSuffix}(?<minutesOverride>[\|0-9]*)}}");
@@ -3305,23 +3317,42 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
             return input;
         }
 
+        /// <summary>
+        /// Converts basic replacements from JCL (eg {title_seo}) to GCL (eg {title:Seo}).
+        /// </summary>
+        /// <param name="input">The string from the JCL to do the replacements in.</param>
+        /// <param name="jclSuffix">The JCL suffix (without underscore) for the replacement to handle, such as "seo".</param>
+        /// <param name="gclSuffix">The suffix that it should be in the GCL.</param>
+        /// <param name="extraParameters">Any extra parameters that the replacement function in the GCL might need.</param>
         private static string ConvertBasicReplacement(string input, string jclSuffix, string gclSuffix, string extraParameters = "")
         {
             if (!String.IsNullOrEmpty(gclSuffix))
             {
                 gclSuffix = $":{gclSuffix}";
             }
-
-            if (!String.IsNullOrEmpty(extraParameters))
-            {
-                extraParameters = $"({extraParameters})";
-            }
-
-            var regex = new Regex(@$"{{(?<variableName>.+)_{jclSuffix}}}");
+            
+            var regex = new Regex(@$"{{(?<variableName>[^\{{\}}\n]+)_{jclSuffix}(?<parameters>[\|][^\}}\n]*)?}}");
             foreach (Match match in regex.Matches(input))
             {
-                var newVariable = $"{{{match.Groups["variableName"].Value}{gclSuffix}{extraParameters}}}";
-                input = input.Replace(match.Value, newVariable);
+                var extraBracketToReplace = "";
+                var parameters = match.Groups["parameters"].Value?.Trim('|');
+
+                if (parameters != null && parameters.StartsWith("{") && !parameters.EndsWith("}"))
+                {
+                    // This is a bit of a hack, because in some cases there will be values like "{price_currency|{culture}}" and our regex will return "{culture" without the last bracket.
+                    // But if we change the regex to include that bracket, then it will often return too much, like "{price_currency|{culture}} <div></div>{otherVariable}" for example.
+                    parameters += "}";
+                    extraBracketToReplace = "}";
+                }
+
+                parameters = String.IsNullOrWhiteSpace(parameters) ? extraParameters : $"{extraParameters},{parameters}";
+                if (!String.IsNullOrEmpty(parameters))
+                {
+                    parameters = $"({parameters})";
+                }
+
+                var newVariable = $"{{{match.Groups["variableName"].Value}{gclSuffix}{parameters}}}";
+                input = input.Replace($"{match.Value}{extraBracketToReplace}", newVariable);
             }
 
             return input;
@@ -3332,10 +3363,11 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
         /// The JCL uses img tags for components, the GCL uses divs.
         /// </summary>
         /// <param name="html">The HTML from the JCL templates module.</param>
+        /// <param name="forJson">Set to true if this is for JSON settings, so that quotes and such will be escaped.</param>
         /// <returns>The HTML for the GCL templates module.</returns>
-        private static string ConvertDynamicComponentsFromLegacyToNewInHtml(string html)
+        private static string ConvertDynamicComponentsFromLegacyToNewInHtml(string html, bool forJson = false)
         {
-            var regex = new Regex(@"<img[^>]*?(?:data=['\""](?<data>.*?)['\""][^>]*?)?contentid=['\""](?<contentId>\d+)['\""][^>]*?\/?>");
+            var regex = new Regex(@"<img[^>]*?(?:data=['\""\\]+(?<data>.*?)['\""\\]+[^>]*?)?contentid=['\""\\]+(?<contentId>\d+)['\""\\]+[^>]*?\/?>");
             var matches = regex.Matches(html);
             foreach (Match match in matches)
             {
@@ -3350,8 +3382,9 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
                     dataAttribute = $"data=\"{dataAttribute}\"";
                 }
 
-                var newElement = $"<div class=\"dynamic-content\" {dataAttribute} component-id=\"{match.Groups["contentId"].Value}\"></div>";
-                html = html.Replace(match.Value, newElement);
+                var componentId = match.Groups["contentId"].Value;
+                var newElement = $"<div class=\"dynamic-content\" {dataAttribute} component-id=\"{componentId}\"><h2>Component {componentId}</h2></div>";
+                html = html.Replace(match.Value, forJson ? HttpUtility.JavaScriptStringEncode(newElement) : newElement);
             }
 
             return html;
@@ -3479,6 +3512,7 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
                     throw new ArgumentOutOfRangeException(nameof(legacyComponentName), legacyComponentName);
             }
             
+            newSettingsJson = ConvertDynamicComponentsFromLegacyToNewInHtml(newSettingsJson, true);
             newSettingsJson = ConvertLegacyReplacementMethodsToNewReplacementMethods(newSettingsJson);
 
             return (viewComponentName, newSettingsJson, title, componentMode);
