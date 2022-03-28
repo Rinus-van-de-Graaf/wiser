@@ -3156,10 +3156,10 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
 
                     foreach (DataRow dynamicContentRow in dynamicContentDataTable.Rows)
                     {
+                        var contentId = dynamicContentRow.Field<int>("id");
                         var legacyComponentName = dynamicContentRow.Field<string>("freefield1");
                         var legacySettingsJson = dynamicContentRow.Field<string>("filledvariables");
                         var (gclComponentName, gclSettingsJson, title, componentMode) = ConvertDynamicComponentSettingsFromLegacyToNew(legacyComponentName, legacySettingsJson);
-                        var contentId = dynamicContentRow.Field<int>("id");
 
                         clientDatabaseConnection.ClearParameters();
                         clientDatabaseConnection.AddParameter("content_id", contentId);
@@ -3406,7 +3406,7 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
                 {
                     viewComponentName = "ShoppingBasket";
                     var legacySettings = JsonConvert.DeserializeObject<ShoppingBasketLegacySettingsModel>(legacySettingsJson);
-                    componentMode = ShoppingBasket.ComponentModes.Render.ToString();
+                    componentMode = ShoppingBasket.ComponentModes.Legacy.ToString();
                     newSettingsJson = JsonConvert.SerializeObject(legacySettings?.ToSettingsModel());
                     title = legacySettings?.VisibleDescription;
                     break;
@@ -3433,7 +3433,7 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
                 {
                     viewComponentName = "Filter";
                     var legacySettings = JsonConvert.DeserializeObject<CmsSettingsLegacy>(legacySettingsJson);
-                    componentMode = Filter.ComponentModes.Direct.ToString();
+                    componentMode = Filter.ComponentModes.Aggregation.ToString();
                     // Settings for account are the same for JCL and GCL.
                     newSettingsJson = legacySettingsJson;
                     title = legacySettings?.VisibleDescription;
