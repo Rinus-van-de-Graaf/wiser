@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Modules.Kendo.Enums;
@@ -86,9 +85,9 @@ namespace Api.Modules.Templates.Interfaces.DataLayer
         /// <summary>
         /// Searches for a template.
         /// </summary>
-        /// <param name="searchSettings">The things to search for.</param>
+        /// <param name="searchValue">What to search for.</param>
         /// <returns></returns>
-        Task<List<SearchResultModel>> SearchAsync(SearchSettingsModel searchSettings);
+        Task<List<SearchResultModel>> SearchAsync(string searchValue);
 
         /// <summary>
         /// Creates an empty template with the given name, type and parent template.
@@ -97,8 +96,9 @@ namespace Api.Modules.Templates.Interfaces.DataLayer
         /// <param name="parent">The id of the parent template of the template that will be created.</param>
         /// <param name="type">The type of the new template that will be created.</param>
         /// <param name="username">The name of the authenticated user.</param>
+        /// <param name="editorValue">The value to be inserted into the editor. This will be empty for blank templates.</param>
         /// <returns>The id of the newly created template. This can be used to update the interface accordingly.</returns>
-        Task<int> CreateAsync(string name, int parent, TemplateTypes type, string username);
+        Task<int> CreateAsync(string name, int parent, TemplateTypes type, string username, string editorValue);
 
         /// <summary>
         /// Makes sure that the ordering of a tree view is correct, to prevent issues with drag and drop in the tree view.

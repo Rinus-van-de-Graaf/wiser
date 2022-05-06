@@ -29,6 +29,7 @@ namespace Api.Modules.Templates.Models.Template
         public TemplateCachingModes UseCache { get; set; }
         public int CacheMinutes { get; set; }
         public TemplateCachingLocations CacheLocation { get; set; }
+        public string CacheRegex { get; set; }
         public bool HandleRequests { get; set; }
         public bool HandleSession { get; set; }
         public bool HandleObjects { get; set; }
@@ -41,6 +42,7 @@ namespace Api.Modules.Templates.Models.Template
         public string LoginUserType { get; set; }
         public string LoginSessionPrefix { get; set; }
         public string LoginRole { get; set; }
+        public string LoginRedirectUrl { get; set; }
         public string PreLoadQuery { get; set; }
 
         // Css/Scss/Js settings.
@@ -62,5 +64,7 @@ namespace Api.Modules.Templates.Models.Template
         public string GroupingValueColumnName { get; set; }
 
         public Dictionary<string, object> Changes { get; set; }
+        
+        public bool ReturnNotFoundWhenPreLoadQueryHasNoData { get; set; }
     }
 }

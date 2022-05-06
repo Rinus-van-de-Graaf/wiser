@@ -58,5 +58,16 @@ namespace Api.Core.Models
         /// The salt used to hash user ID for the Pusher server.
         /// </summary>
         public string PusherSalt { get; set; }
+
+        /// <summary>
+        /// The sub domain that should be used to login to the main wiser database (the one that contains the table "easy_customers"), when using multi tenancy.
+        /// This value is not used when not using multi tenancy.
+        /// </summary>
+        public string MainSubDomain { get; set; } = "main";
+
+        /// <summary>
+        /// The fully qualified name of the certificate in the store of the server, of the certificate to use for IdentityServer4 (OAUTH2) authentication.
+        /// </summary>
+        public string SigningCredentialCertificate { get; set; }
     }
 }

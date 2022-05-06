@@ -78,7 +78,11 @@ export class Grids {
             }
 
             this.informationBlockIframe = $(`<iframe />`).appendTo(informationBlockContainer);
-            this.informationBlockIframe[0].onload = () => {
+            this.informationBlockIframe[0].onload = (event) => {
+                if (event.target.contentDocument.URL === "about:blank") {
+                    return;
+                }
+                
                 window.processing.removeProcess(initialProcess);
 
                 dynamicItems.grids.informationBlockIframe[0].contentDocument.addEventListener("dynamicItems.onSaveButtonClick", () => {
@@ -107,8 +111,9 @@ export class Grids {
                         if (!createItemResult) {
                             return hideGrid;
                         }
+                        
                         const itemId = createItemResult.itemId;
-                        this.informationBlockIframe.attr("src", `${"/Modules/DynamicItems"}?itemId=${itemId}&moduleId=${this.base.settings.moduleId}&iframe=true&readonly=${!!informationBlockSettings.initialItem.readOnly}&hideFooter=${!!informationBlockSettings.initialItem.hideFooter}&hideHeader=${!!informationBlockSettings.initialItem.hideHeader}`);
+                        this.informationBlockIframe.attr("src", `/Modules/DynamicItems?itemId=${itemId}&moduleId=${this.base.settings.moduleId}&iframe=true&readonly=${!!informationBlockSettings.initialItem.readOnly}&hideFooter=${!!informationBlockSettings.initialItem.hideFooter}&hideHeader=${!!informationBlockSettings.initialItem.hideHeader}`);
                     },
                     icon: "save"
                 });
@@ -123,7 +128,7 @@ export class Grids {
                 itemId = createItemResult.itemId;
             }
 
-            this.informationBlockIframe.attr("src", `${"/Modules/DynamicItems"}?itemId=${itemId}&moduleId=${this.base.settings.moduleId}&iframe=true&readonly=${!!informationBlockSettings.initialItem.readOnly}&hideFooter=${!!informationBlockSettings.initialItem.hideFooter}&hideHeader=${!!informationBlockSettings.initialItem.hideHeader}`);
+            this.informationBlockIframe.attr("src", `/Modules/DynamicItems?itemId=${itemId}&moduleId=${this.base.settings.moduleId}&iframe=true&readonly=${!!informationBlockSettings.initialItem.readOnly}&hideFooter=${!!informationBlockSettings.initialItem.hideFooter}&hideHeader=${!!informationBlockSettings.initialItem.hideHeader}`);
         } catch (exception) {
             kendo.alert("Er is iets fout gegaan tijdens het laden van de data voor deze module. Sluit a.u.b. de module en probeer het nogmaals, of neem contact op met ons.");
             console.error(exception);
@@ -993,7 +998,7 @@ export class Grids {
         const originalEncryptedId = encryptedId;
         let entityType = dataItem.entityType || dataItem.entity_type;
         let title = dataItem.title;
-        const linkId = dataItem.linkId;
+        const linkId = dataItem.linkId || dataItem.link_id;
 
         if (options.fromMainGrid && this.base.settings.openGridItemsInBlock) {
             this.base.grids.informationBlockIframe.attr("src", `${"/Modules/DynamicItems"}?itemId=${encryptedId}&moduleId=${this.base.settings.moduleId}&iframe=true`);
@@ -1239,7 +1244,7 @@ export class Grids {
                                 primary: true,
                                 action: (e) => {
                                     const destinationItemId = dataItem.encryptedDestinationItemId || senderGrid.element.closest(".item").data("itemIdEncrypted");
-                                    this.base.removeItemLink(options.currentItemIsSourceId ? destinationItemId : encryptedId, options.currentItemIsSourceId ? encryptedId : destinationItemId, dataItem.linkTypeNumber).then(() => {
+                                    this.base.removeItemLink(options.currentItemIsSourceId ? destinationItemId : encryptedId, options.currentItemIsSourceId ? encryptedId : destinationItemId, dataItem.link_type_number).then(() => {
                                         senderGrid.dataSource.read();
                                     });
                                 }

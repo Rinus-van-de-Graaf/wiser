@@ -36,7 +36,15 @@ namespace Api.Modules.Templates.Services.DataLayer
             var resultDict = new List<HistoryVersionModel>();
             foreach (DataRow row in dataTable.Rows)
             {
-                resultDict.Add(new HistoryVersionModel(row.Field<int>("version"), row.Field<DateTime>("changed_on"), row.Field<string>("changed_by"), row.Field<string>("component"), row.Field<string>("component_mode"), row.Field<string>("settings")));
+                resultDict.Add(new HistoryVersionModel
+                {
+                    Version = row.Field<int>("version"),
+                    ChangedOn = row.Field<DateTime>("changed_on"),
+                    ChangedBy = row.Field<string>("changed_by"),
+                    Component = row.Field<string>("component"),
+                    ComponentMode = row.Field<string>("component_mode"),
+                    RawVersionString = row.Field<string>("settings")
+                });
             }
             return resultDict;
         }
@@ -74,6 +82,7 @@ namespace Api.Modules.Templates.Services.DataLayer
                                                                 template.use_cache,
                                                                 template.cache_minutes, 
                                                                 template.cache_location, 
+                                                                template.cache_regex, 
                                                                 template.handle_request, 
                                                                 template.handle_session, 
                                                                 template.handle_objects, 
@@ -99,7 +108,8 @@ namespace Api.Modules.Templates.Services.DataLayer
                                                                 template.grouping_value_column_name,
                                                                 template.is_scss_include_template,
                                                                 template.use_in_wiser_html_editors,
-                                                                template.pre_load_query
+                                                                template.pre_load_query,
+                                                                template.return_not_found_when_pre_load_query_has_no_data
                                                             FROM {WiserTableNames.WiserTemplate} AS template 
 				                                            LEFT JOIN (SELECT linkedTemplate.template_id, template_name, template_type FROM {WiserTableNames.WiserTemplate} linkedTemplate WHERE linkedTemplate.removed = 0 GROUP BY template_id) AS linkedTemplates ON FIND_IN_SET(linkedTemplates.template_id, template.linked_templates)
                                                             WHERE template.template_id = ?templateId
@@ -152,7 +162,8 @@ namespace Api.Modules.Templates.Services.DataLayer
                     GroupingValueColumnName = row.Field<string>("grouping_value_column_name"),
                     IsScssIncludeTemplate = Convert.ToBoolean(row["is_scss_include_template"]),
                     UseInWiserHtmlEditors = Convert.ToBoolean(row["use_in_wiser_html_editors"]),
-                    PreLoadQuery = row.Field<string>("pre_load_query")
+                    PreLoadQuery = row.Field<string>("pre_load_query"),
+                    ReturnNotFoundWhenPreLoadQueryHasNoData = Convert.ToBoolean(row["return_not_found_when_pre_load_query_has_no_data"])
                 };
 
                 resultList.Add(templateData);

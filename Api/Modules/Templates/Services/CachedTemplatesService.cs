@@ -128,9 +128,9 @@ namespace Api.Modules.Templates.Services
         }
 
         /// <inheritdoc />
-        public async Task<ServiceResult<List<SearchResultModel>>> SearchAsync(SearchSettingsModel searchSettings)
+        public async Task<ServiceResult<List<SearchResultModel>>> SearchAsync(string searchValue)
         {
-            return await templatesService.SearchAsync(searchSettings);
+            return await templatesService.SearchAsync(searchValue);
         }
 
         /// <inheritdoc />
@@ -140,9 +140,9 @@ namespace Api.Modules.Templates.Services
         }
 
         /// <inheritdoc />
-        public async Task<ServiceResult<TemplateTreeViewModel>> CreateAsync(ClaimsIdentity identity, string name, int parent, TemplateTypes type)
+        public async Task<ServiceResult<TemplateTreeViewModel>> CreateAsync(ClaimsIdentity identity, string name, int parent, TemplateTypes type, string editorValue = "")
         {
-            return await templatesService.CreateAsync(identity, name, parent, type);
+            return await templatesService.CreateAsync(identity, name, parent, type, editorValue);
         }
 
         /// <inheritdoc />

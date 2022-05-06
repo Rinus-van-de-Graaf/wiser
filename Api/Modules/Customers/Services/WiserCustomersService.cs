@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Api.Core.Helpers;
@@ -63,7 +59,7 @@ namespace Api.Modules.Customers.Services
                     CustomerId = 1,
                     Id = 1,
                     Name = "Main",
-                    SubDomain = CustomerConstants.MainSubDomain,
+                    SubDomain = apiSettings.MainSubDomain,
                     EncryptionKey = String.IsNullOrWhiteSpace(gclSettings.ExpiringEncryptionKey) ? gclSettings.DefaultEncryptionKey : gclSettings.ExpiringEncryptionKey
                 });
             }
@@ -372,7 +368,7 @@ namespace Api.Modules.Customers.Services
         /// <inheritdoc />
         public bool IsMainDatabase(string subDomain)
         {
-            return String.IsNullOrWhiteSpace(subDomain) || String.Equals(subDomain, CustomerConstants.MainSubDomain, StringComparison.OrdinalIgnoreCase);
+            return String.IsNullOrWhiteSpace(subDomain) || String.Equals(subDomain, apiSettings.MainSubDomain, StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion
