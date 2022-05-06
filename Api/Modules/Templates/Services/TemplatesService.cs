@@ -3220,14 +3220,14 @@ WHERE template.templatetype IS NULL OR template.templatetype <> 'normal'";
             // Likes in queries.
             if (input.Contains("like", StringComparison.OrdinalIgnoreCase))
             {
-                input = Regex.Replace(input, @"LIKE '%\[\{(?<variableName>.+)\}\]%'", "LIKE CONCAT('%', '{${variableName}}', '%')");
-                input = Regex.Replace(input, @"LIKE '%\{(?<variableName>.+)\}%'", "LIKE CONCAT('%', '{${variableName}}', '%')");
+                input = Regex.Replace(input, @"LIKE '%\[\{(?<variableName>[^}]+?)\}\]%'", "LIKE CONCAT('%', '{${variableName}}', '%')");
+                input = Regex.Replace(input, @"LIKE '%\{(?<variableName>[^}]+?)\}%'", "LIKE CONCAT('%', '{${variableName}}', '%')");
                 
-                input = Regex.Replace(input, @"LIKE '%\[\{(?<variableName>.+)\}\]'", "LIKE CONCAT('%', '{${variableName}}')");
-                input = Regex.Replace(input, @"LIKE '%\{(?<variableName>.+)\}'", "LIKE CONCAT('%', '{${variableName}}')");
+                input = Regex.Replace(input, @"LIKE '%\[\{(?<variableName>[^}]+?)\}\]'", "LIKE CONCAT('%', '{${variableName}}')");
+                input = Regex.Replace(input, @"LIKE '%\{(?<variableName>[^}]+?)\}'", "LIKE CONCAT('%', '{${variableName}}')");
                 
-                input = Regex.Replace(input, @"LIKE '\[\{(?<variableName>.+)\}\]%'", "LIKE CONCAT('{${variableName}}', '%')");
-                input = Regex.Replace(input, @"LIKE '\{(?<variableName>.+)\}%'", "LIKE CONCAT('{${variableName}}', '%')");
+                input = Regex.Replace(input, @"LIKE '\[\{(?<variableName>[^}]+?)\}\]%'", "LIKE CONCAT('{${variableName}}', '%')");
+                input = Regex.Replace(input, @"LIKE '\{(?<variableName>[^}]+?)\}%'", "LIKE CONCAT('{${variableName}}', '%')");
             }
 
             input = ConvertBasicReplacement(input, "seo", "Seo");
