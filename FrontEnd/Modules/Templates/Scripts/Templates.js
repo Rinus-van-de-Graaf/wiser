@@ -22,7 +22,7 @@ require("@progress/kendo-ui/js/cultures/kendo.culture.nl-NL.js");
 require("@progress/kendo-ui/js/messages/kendo.messages.nl-NL.js");
 
 import "../css/Templates.css";
-import "../css/ConfigTab.css";
+import "../css/WtsConfiguration.css";
 import {Init} from "codemirror/src/edit/options";
 
 // Any custom settings can be added here. They will overwrite most default settings inside the module.
@@ -164,7 +164,7 @@ const moduleSettings = {
             if (!this.settings.wiserApiRoot.endsWith("/")) {
                 this.settings.wiserApiRoot += "/";
             }
-            
+
             // Don't allow users to use this module in a branch, only in the main/production environment of a tenant.
             if (!userData.currentBranchIsMainBranch) {
                 $("#NotMainBranchNotification").removeClass("hidden");
@@ -172,7 +172,7 @@ const moduleSettings = {
                 window.processing.removeProcess(process);
                 return;
             }
-            
+
             try {
                 this.branches = await Wiser.api({
                     url: `${this.settings.wiserApiRoot}branches`,
@@ -187,10 +187,10 @@ const moduleSettings = {
 
             await this.initializeKendoComponents();
             this.bindEvents();
-            
+
             // Start the Pusher connection.
             await this.connectedUsers.init();
-            
+
             // If we have a template ID in the query string, load that template immediately.
             if (this.settings.templateId) {
                 await this.loadTemplate(this.settings.templateId);
@@ -279,7 +279,7 @@ const moduleSettings = {
             // Select first tab.
             this.treeViewTabStrip.select(0);
 
-            // Treeview 
+            // Treeview
             this.mainTreeView = [];
             $(".treeview:not(#search-results-treeview)").each((index, element) => {
                 const treeViewElement = $(element);
@@ -580,7 +580,7 @@ const moduleSettings = {
                     }
                 ],
             }).data("kendoGrid");
-            
+
             this.wtsLinkedActionsGrid = $("#wtsLinkedActions").kendoGrid({
                 resizable: true,
                 height: 280,
@@ -597,10 +597,10 @@ const moduleSettings = {
                     }, {
                         field: "LaatsteRunTijd",
                         title: "Laatste Run-Tijd"
-                    }, { 
-                        command: "destroy", 
-                        title: "&nbsp;", 
-                        width: 120 
+                    }, {
+                        command: "destroy",
+                        title: "&nbsp;",
+                        width: 120
                     }
                 ],
             }).data("kendoGrid");
@@ -656,7 +656,7 @@ const moduleSettings = {
                 const newItemIsDirectoryCheckBox = $("#newItemIsDirectoryCheckBox").prop("checked", false);
                 const newItemTitleField = $("#newItemTitleField").val("");
                 const parentIsDirectory = dataItem.isFolder;
-                
+
                 if (!isFromContextMenu) {
                     selectedTreeViewNode = treeView.select();
                 }
@@ -1322,7 +1322,7 @@ const moduleSettings = {
             if (!isDatabaseElementTemplate) {
                 return;
             }
-            
+
             const saveAndDeployToTestButton = document.getElementById("saveAndDeployToTestButton");
             $(saveAndDeployToTestButton).getKendoButton().enable(false);
             saveAndDeployToTestButton.classList.add("hidden");
@@ -1418,7 +1418,7 @@ const moduleSettings = {
                     optionLabel: "Kies een branch..."
                 });
             }
-            
+
             this.bindDeploymentTabEvents();
 
             // ComboBox
@@ -1911,7 +1911,7 @@ const moduleSettings = {
         onDynamicContentDuplicateClick(templateId, event) {
             const process = `duplicateComponent_${Date.now()}`;
             window.processing.addProcess(process);
-            
+
             const tr = $(event.currentTarget).closest("tr");
             const data = this.dynamicContentGrid.dataItem(tr);
 
@@ -1926,11 +1926,11 @@ const moduleSettings = {
                 window.processing.removeProcess(process);
             });
         }
-        
+
         onDynamicContentDeleteClick(event) {
             const tr = $(event.currentTarget).closest("tr");
             const data = this.dynamicContentGrid.dataItem(tr);
-            
+
             Wiser.showConfirmDialog(`Weet u zeker dat u het item '${data.title}' wilt verwijderen?`).then(async () => {
                     Wiser.api({
                         url: `${this.settings.wiserApiRoot}dynamic-content/${data.id}`,
@@ -1944,7 +1944,7 @@ const moduleSettings = {
                         kendo.alert("Er is iets fout gegaan tijdens het verwijderen van dit item. Probeer het a.u.b. nogmaals of neem contact op met ons.");
                     });
             })
-            
+
         }
 
         onDynamicContentGridChange(event) {
@@ -1983,7 +1983,7 @@ const moduleSettings = {
                     optionLabel: "Kies een component"
                 }).data("kendoDropDownList");
             }
-            
+
             const allDynamicContent = await Wiser.api({
                 url: `${this.settings.wiserApiRoot}dynamic-content/linkable?templateId=${templateId}`,
                 dataType: "json",
@@ -2106,7 +2106,7 @@ const moduleSettings = {
                 kendo.alert("U heeft geen geldige versie geselecteerd.");
                 return;
             }
-            
+
             let environmentEnum;
             switch (environment) {
                 case "test":
@@ -2196,7 +2196,7 @@ const moduleSettings = {
 
                 event.detail();
             });
-            
+
             document.body.addEventListener("keydown", (event) => {
                 if ((event.ctrlKey || event.metaKey) && event.keyCode === 83) {
                     event.preventDefault();
@@ -2444,7 +2444,7 @@ const moduleSettings = {
                     type: "POST",
                     contentType: "application/json"
                 });
-                
+
                 window.popupNotification.show(`Component is succesvol overgezet naar de geselecteerde branch.`, "info");
             }
             catch (exception) {
@@ -2600,7 +2600,7 @@ const moduleSettings = {
                     }
                 });
                 this.searchResultsTreeView.setDataSource(dataSource);
-                
+
                 const searchResultsTab = this.treeViewTabStrip.tabGroup.find("li:last-child");
                 searchResultsTab.removeClass("hidden");
                 this.treeViewTabStrip.select(searchResultsTab);
@@ -2632,12 +2632,12 @@ const moduleSettings = {
             });
 
             document.querySelector("#published-environments").outerHTML = response;
-            
+
             // Bind deploy buttons.
             $("#deployLive, #deployAccept, #deployTest, #deployToBranchButton").kendoButton();
             $("#published-environments .combo-select").kendoDropDownList();
             this.bindDeployButtons(templateId);
-            
+
             // Bind save buttons.
             $("#saveButton, #saveAndDeployToTestButton").kendoButton({
                 icon: "save"
@@ -2656,7 +2656,7 @@ const moduleSettings = {
             }
 
             this.bindDeploymentTabEvents();
-            
+
             // Database elements (views, routines and templates) disable some functionality that do not apply to these functions.
             this.toggleElementsForDatabaseTemplates(this.templateSettings.type);
         }
@@ -2730,7 +2730,7 @@ const moduleSettings = {
                 });
 
                 document.getElementById("measurementsTab").innerHTML = measurementsTab;
-                
+
                 // Initialize save button for settings.
                 $("#saveMeasuringSettingsButton").kendoButton({
                     icon: "save",
@@ -2739,7 +2739,7 @@ const moduleSettings = {
                         this.saveMeasurementSettings(templateId);
                     }
                 });
-                                
+
                 // Initialize the grid with rendering logs.
                 this.renderLogsGrid = $("#renderLogsGrid").kendoGrid({
                     dataSource: {
@@ -2829,7 +2829,7 @@ const moduleSettings = {
                         }
                     ]
                 }).data("kendoGrid");
-                                
+
                 this.renderingLogsChart = $("#measurementCharts").kendoChart({
                     title: {
                         text: "Rendertijden"
@@ -2869,13 +2869,13 @@ const moduleSettings = {
                         format: "N3"
                     }
                 }).data("kendoChart");
-                
+
                 this.measurementUserIdFilter = $("#measurementUserIdFilter").kendoNumericTextBox({
                     decimals: 0,
                     format: "#",
                     change: this.updateRenderingDataOnMeasurementsTab.bind(this, templateId)
                 }).data("kendoNumericTextBox");
-                
+
                 this.measurementEnvironmentFilter = $("#measurementEnvironmentFilter").kendoDropDownList({
                     optionLabel: "Alle omgevingen",
                     change: this.updateRenderingDataOnMeasurementsTab.bind(this, templateId)
@@ -2945,7 +2945,7 @@ const moduleSettings = {
                         measureRenderTimesOnLiveForCurrent: document.querySelector("#measureInLive").checked,
                     })
                 });
-                
+
                 window.popupNotification.show(`Instellingen succesvol opgslagen`, "info");
             }
             catch (exception) {
@@ -3118,7 +3118,7 @@ const moduleSettings = {
             if (preLoadQueryField.length > 0 && preLoadQueryField.data("CodeMirrorInstance")) {
                 settingsList.preLoadQuery = preLoadQueryField.data("CodeMirrorInstance").getValue();
             }
-            
+
             const widgetContentField = $("#widgetContent");
             if (widgetContentField.length > 0 && widgetContentField.data("CodeMirrorInstance")) {
                 settingsList.widgetContent = widgetContentField.data("CodeMirrorInstance").getValue();
