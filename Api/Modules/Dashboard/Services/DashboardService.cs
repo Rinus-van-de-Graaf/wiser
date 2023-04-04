@@ -882,7 +882,7 @@ WHERE id = ?serviceId");
             clientDatabaseConnection.ClearParameters();
             clientDatabaseConnection.AddParameter("tableName", WiserTableNames.WiserDashboard);
             clientDatabaseConnection.AddParameter("lastUpdate", DateTime.Now);
-            var lastUpdateData = await clientDatabaseConnection.GetAsync("SELECT `name` FROM `{WiserTableChanges}` WHERE `name` = ?tableName");
+            var lastUpdateData = await clientDatabaseConnection.GetAsync($"SELECT `name` FROM `{WiserTableNames.WiserTableChanges}` WHERE `name` = ?tableName");
             var queryDatabasePart = !String.IsNullOrWhiteSpace(databaseName) ? $"`{databaseName}`." : String.Empty;
             if (lastUpdateData.Rows.Count == 0)
             {
