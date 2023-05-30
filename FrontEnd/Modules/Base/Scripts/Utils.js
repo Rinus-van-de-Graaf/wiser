@@ -1218,7 +1218,8 @@ export class Misc {
      */
     static ensureCodeMirror() {
         return new Promise((resolve) => {
-            if (window.CodeMirror) {
+            resolve();
+            /*if (window.CodeMirror) {
                 resolve(window.CodeMirror);
                 return;
             }
@@ -1270,7 +1271,7 @@ export class Misc {
                 window.CSSLint = modules[21].CSSLint;
                 resolve(window.CodeMirror);
                 return;
-            });
+            });*/
         });
     }
 
