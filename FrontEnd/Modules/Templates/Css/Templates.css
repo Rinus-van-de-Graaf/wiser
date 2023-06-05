@@ -199,6 +199,16 @@
 }
 
 /** TABSTRIP **/
+#left-pane .k-link {
+    padding: 12px 0px 12px 8px;    
+}
+
+#left-pane .k-tabstrip-prev,
+#left-pane .k-tabstrip-next{
+    padding: 12px 2px 12px 2px;
+    max-width: 20px;
+}
+
 #left-pane .k-tabstrip-items-wrapper {
     display: flex;
 }

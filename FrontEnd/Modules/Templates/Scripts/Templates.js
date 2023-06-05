@@ -230,7 +230,7 @@ const moduleSettings = {
             this.mainSplitter = $("#horizontal").kendoSplitter({
                 panes: [{
                     collapsible: true,
-                    size: "15%"
+                    size: "230px"
                 }, {
                     collapsible: false
                 }]
@@ -268,7 +268,8 @@ const moduleSettings = {
 
             for (let tab of this.treeViewTabs) {
                 this.treeViewTabStrip.append({
-                    text: tab.templateName,
+                    text: `<ins class='icon-template-${tab.templateName.toLowerCase()}' title="${tab.templateName}">&nbsp;</ins>`,
+                    encoded:false,
                     content: `<ul id="${tab.templateId}-treeview" class="treeview" data-id="${tab.templateId}" data-title="${tab.templateName}"></ul>`
                 });
             }

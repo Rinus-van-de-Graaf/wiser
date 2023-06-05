@@ -1301,3 +1301,33 @@
 .icon-uniEA2F:before {
     content: "\ec57";
 }
+
+/* Template type iconen voor templatemodule */
+
+.icon-template-services:before {
+    content: "\ec58";
+}
+
+.icon-template-js:before {
+    content: "\ec59";
+}
+
+.icon-template-routines:before {
+    content: "\ec5a";
+}
+
+.icon-template-html:before {
+    content: "\ea35";
+}
+
+.icon-template-css:before {
+    content: "\ea33";
+}
+
+.icon-template-scss:before {
+    content: "\ea33";
+}
+
+.icon-template-sql:before {
+    content: "\ea34";
+}

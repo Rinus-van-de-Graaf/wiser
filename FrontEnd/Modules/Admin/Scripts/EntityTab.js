@@ -983,7 +983,14 @@ export class EntityTab {
             { text: "uniEA2C", value: "icon-uniEA2C" },
             { text: "uniEA2D", value: "icon-uniEA2D" },
             { text: "uniEA2E", value: "icon-uniEA2E" },
-            { text: "uniEA2F", value: "icon-uniEA2F" }
+            { text: "uniEA2F", value: "icon-uniEA2F" },
+            { text: "miscellaneous_services", value: "icon-miscellaneous_services" },
+            { text: "javascript", value:"icon-javascript" },
+            { text: "mysql", value:"icon-mysql" },
+            { text: "document-file-xml", value:"icon-document-file-xml" },
+            { text: "document-file-html", value:"icon-document-file-html" },
+            { text: "document-file-css", value:"icon-document-file-css" },
+            { text: "document-file-sql", value:"icon-document-file-sql" }
         ];
 
         // Icon list
